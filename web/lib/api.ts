@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api/v1";
+import { API_BASE } from "./constants";
 
 export interface UnitData {
   name: string;

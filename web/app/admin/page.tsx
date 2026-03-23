@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { ContributionResponse } from "@/lib/api";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api/v1";
+import { API_BASE } from "@/lib/constants";
 
 export default function AdminPage() {
+  const { t } = useTranslation();
   const [apiKey, setApiKey] = useState("");
   const [authed, setAuthed] = useState(false);
   const [tab, setTab] = useState<"pending" | "approved" | "rejected">("pending");
@@ -30,11 +31,11 @@ export default function AdminPage() {
       if (!res.ok) throw new Error("Failed to fetch");
       setContributions(await res.json());
     } catch {
-      setError("Failed to load contributions");
+      setError(t("admin.fetchError"));
     } finally {
       setLoading(false);
     }
-  }, [apiKey, tab]);
+  }, [apiKey, tab, t]);
 
   useEffect(() => {
     if (authed) fetchContributions();
@@ -49,14 +50,14 @@ export default function AdminPage() {
       });
       if (!res.ok) {
         const err = await res.json();
-        setActionMsg(err.detail || "Action failed");
+        setActionMsg(err.detail || t("admin.actionFailed"));
         return;
       }
       const doc: ContributionResponse = await res.json();
       setActionMsg(`${doc.unit_name} → ${doc.status}`);
       fetchContributions();
     } catch {
-      setActionMsg("Action failed");
+      setActionMsg(t("admin.actionFailed"));
     }
   }
 
@@ -67,12 +68,12 @@ export default function AdminPage() {
 
   if (!authed) {
     return (
-      <div className="max-w-sm mx-auto px-6 py-16">
-        <h1 className="text-2xl font-bold mb-6">Admin</h1>
+      <div className="max-w-sm mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <h1 className="text-2xl font-bold mb-6">{t("admin.title")}</h1>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label className="block text-xs text-[var(--muted)] mb-1">
-              API Key
+              {t("admin.apiKey")}
             </label>
             <input
               type="password"
@@ -89,7 +90,7 @@ export default function AdminPage() {
             type="submit"
             className="w-full bg-[var(--accent)] text-white rounded-md px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity"
           >
-            Login
+            {t("admin.login")}
           </button>
         </form>
       </div>
@@ -97,29 +98,29 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Admin — Contributions</h1>
+        <h1 className="text-2xl font-bold">{t("admin.mainTitle")}</h1>
         <button
           onClick={() => { setAuthed(false); setApiKey(""); }}
           className="text-xs text-[var(--muted)] hover:text-[var(--foreground)]"
         >
-          Logout
+          {t("admin.logout")}
         </button>
       </div>
 
       <div className="flex gap-1 mb-6 border-b border-[var(--border)]">
-        {(["pending", "approved", "rejected"] as const).map((t) => (
+        {(["pending", "approved", "rejected"] as const).map((tb) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
+            key={tb}
+            onClick={() => setTab(tb)}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              tab === t
+              tab === tb
                 ? "border-[var(--accent)] text-[var(--accent)]"
                 : "border-transparent text-[var(--muted)] hover:text-[var(--foreground)]"
             }`}
           >
-            {t.charAt(0).toUpperCase() + t.slice(1)}
+            {t(`admin.${tb}`)}
           </button>
         ))}
       </div>
@@ -131,11 +132,13 @@ export default function AdminPage() {
       )}
 
       {loading ? (
-        <p className="text-sm text-[var(--muted)]">Loading...</p>
+        <p className="text-sm text-[var(--muted)]">{t("admin.loading")}</p>
       ) : error ? (
         <p className="text-sm text-red-500">{error}</p>
       ) : contributions.length === 0 ? (
-        <p className="text-sm text-[var(--muted)]">No {tab} contributions.</p>
+        <p className="text-sm text-[var(--muted)]">
+          {t("admin.empty", { status: t(`admin.${tab}`) })}
+        </p>
       ) : (
         <div className="space-y-3">
           {contributions.map((c) => (
@@ -148,7 +151,7 @@ export default function AdminPage() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold">{c.unit_name}</span>
                     <span className="font-mono text-sm">
-                      {c.conversion_factor.toLocaleString()} sqft
+                      {c.conversion_factor.toLocaleString()} {t("admin.sqft")}
                     </span>
                     {c.region && (
                       <span className="text-xs bg-[var(--accent-light)] text-[var(--accent)] px-2 py-0.5 rounded-full">
@@ -159,7 +162,7 @@ export default function AdminPage() {
                   <div className="text-xs text-[var(--muted)] mt-1 space-x-3">
                     {c.state && <span>{c.state}</span>}
                     {c.country && <span>{c.country}</span>}
-                    {c.source && <span>src: {c.source}</span>}
+                    {c.source && <span>{t("admin.src")} {c.source}</span>}
                   </div>
                   {c.notes && (
                     <p className="text-xs text-[var(--muted)] mt-1 italic">
@@ -168,14 +171,14 @@ export default function AdminPage() {
                   )}
                   {c.aliases.length > 0 && (
                     <p className="text-xs text-[var(--muted)] mt-1">
-                      aliases: {c.aliases.join(", ")}
+                      {t("admin.aliases")} {c.aliases.join(", ")}
                     </p>
                   )}
                   <p className="text-xs text-[var(--muted)] mt-1">
                     {new Date(c.submitted_at).toLocaleString()}
                     {c.reviewed_at && (
                       <span>
-                        {" "}· reviewed {new Date(c.reviewed_at).toLocaleString()}
+                        {" "}· {t("admin.reviewed")} {new Date(c.reviewed_at).toLocaleString()}
                       </span>
                     )}
                   </p>
@@ -186,13 +189,13 @@ export default function AdminPage() {
                       onClick={() => handleAction(c.id, "approve")}
                       className="px-3 py-1.5 text-xs font-medium rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors"
                     >
-                      Approve
+                      {t("admin.approve")}
                     </button>
                     <button
                       onClick={() => handleAction(c.id, "reject")}
                       className="px-3 py-1.5 text-xs font-medium rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors"
                     >
-                      Reject
+                      {t("admin.reject")}
                     </button>
                   </div>
                 )}

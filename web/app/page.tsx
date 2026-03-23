@@ -1,16 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { fetchUnits, UnitData } from "@/lib/api";
-
-const STATES = [
-  "UP", "Bihar", "Jharkhand", "Punjab", "Haryana", "HimachalPradesh",
-  "Uttarakhand", "Rajasthan", "Maharashtra", "Gujarat", "TamilNadu",
-  "Kerala", "Karnataka", "AndhraPradesh", "Telangana", "WestBengal",
-  "Tripura", "Assam", "MadhyaPradesh", "Chhattisgarh",
-];
+import { STATES } from "@/lib/constants";
 
 export default function UnitsPage() {
+  const { t } = useTranslation();
   const [country] = useState("IN");
   const [state, setState] = useState("");
   const [units, setUnits] = useState<UnitData[]>([]);
@@ -28,10 +24,10 @@ export default function UnitsPage() {
   const globalUnits = units.filter((u) => !u.country);
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8">
-      <h1 className="text-2xl font-bold mb-1">Land Units</h1>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <h1 className="text-2xl font-bold mb-1">{t("units.title")}</h1>
       <p className="text-sm text-[var(--muted)] mb-6">
-        Browse region-specific land measurement units across India
+        {t("units.subtitle")}
       </p>
 
       <div className="flex gap-3 mb-6">
@@ -40,7 +36,7 @@ export default function UnitsPage() {
           onChange={(e) => setState(e.target.value)}
           className="border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
         >
-          <option value="">All States</option>
+          <option value="">{t("units.allStates")}</option>
           {STATES.map((s) => (
             <option key={s} value={s}>
               {s}
@@ -50,13 +46,15 @@ export default function UnitsPage() {
       </div>
 
       {loading ? (
-        <p className="text-[var(--muted)] text-sm">Loading...</p>
+        <p className="text-[var(--muted)] text-sm">{t("units.loading")}</p>
       ) : (
         <>
           {localUnits.length > 0 && (
             <section className="mb-8">
               <h2 className="text-sm font-semibold text-[var(--muted)] uppercase tracking-wide mb-3">
-                {state || "All"} — Local Units ({localUnits.length})
+                {state
+                  ? t("units.localHeading", { state, count: localUnits.length })
+                  : t("units.allLocalHeading", { count: localUnits.length })}
               </h2>
               <div className="grid gap-3">
                 {localUnits.map((u, i) => (
@@ -69,7 +67,7 @@ export default function UnitsPage() {
           {globalUnits.length > 0 && (
             <section>
               <h2 className="text-sm font-semibold text-[var(--muted)] uppercase tracking-wide mb-3">
-                Global Units ({globalUnits.length})
+                {t("units.globalHeading", { count: globalUnits.length })}
               </h2>
               <div className="grid gap-3">
                 {globalUnits.map((u, i) => (
@@ -85,6 +83,8 @@ export default function UnitsPage() {
 }
 
 function UnitCard({ unit }: { unit: UnitData }) {
+  const { t } = useTranslation();
+
   return (
     <div className="border border-[var(--border)] rounded-lg p-4 bg-[var(--card)] flex items-start justify-between gap-4">
       <div>
@@ -103,12 +103,12 @@ function UnitCard({ unit }: { unit: UnitData }) {
         </div>
         {unit.aliases.length > 0 && (
           <p className="text-xs text-[var(--muted)] mt-1">
-            aka: {unit.aliases.join(", ")}
+            {t("units.aka")} {unit.aliases.join(", ")}
           </p>
         )}
         {unit.relation && (
           <p className="text-xs text-[var(--muted)] mt-1">
-            {unit.relation.ratio} of {unit.relation.parent}
+            {unit.relation.ratio} {t("units.of")} {unit.relation.parent}
           </p>
         )}
         {unit.state && (
@@ -119,7 +119,9 @@ function UnitCard({ unit }: { unit: UnitData }) {
         <span className="font-mono text-sm font-medium">
           {unit.conversion_factor.toLocaleString()}
         </span>
-        <span className="text-xs text-[var(--muted)] ml-1">sqft</span>
+        <span className="text-xs text-[var(--muted)] ml-1">
+          {t("units.sqft")}
+        </span>
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
+import I18nProvider from "@/lib/i18n/I18nProvider";
+import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,7 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://unitatlas.hortiprise.com";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -120,52 +122,11 @@ export default function RootLayout({
             }),
           }}
         />
-        <nav className="sticky top-0 z-50 bg-[var(--background)] border-b border-[var(--border)] px-6 py-3 flex items-center gap-6">
-          <Link href="/" className="font-bold text-lg tracking-tight">
-            UnitAtlas
-          </Link>
-          <Link
-            href="/"
-            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-          >
-            Units
-          </Link>
-          <Link
-            href="/convert"
-            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-          >
-            Convert
-          </Link>
-          <Link
-            href="/contribute"
-            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-          >
-            Contribute
-          </Link>
-          <Link
-            href="/docs"
-            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-          >
-            API Docs
-          </Link>
-          <div className="flex-1" />
-          <Link
-            href="/admin"
-            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-          >
-            Admin
-          </Link>
-        </nav>
-        <main className="flex-1">{children}</main>
-        <footer className="border-t border-[var(--border)] px-6 py-4 text-center text-xs text-[var(--muted)] space-y-1">
-          <p>UnitAtlas — Open-source geo-aware unit registry</p>
-          <p>
-            Managed by{" "}
-            <a href="https://github.com/vaibhava17" target="_blank" rel="noopener noreferrer" className="text-[var(--foreground)] hover:underline">vaibhava17</a>
-            {" · "}
-            <a href="mailto:iamvaibhav.agarwal@gmail.com" className="text-[var(--foreground)] hover:underline">iamvaibhav.agarwal@gmail.com</a>
-          </p>
-        </footer>
+        <I18nProvider>
+          <NavBar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </I18nProvider>
       </body>
     </html>
   );

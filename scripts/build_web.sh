@@ -5,8 +5,15 @@ PROJ_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WEB_DIR="$PROJ_ROOT/web"
 STATIC_DIR="$PROJ_ROOT/static"
 
-echo "Building Next.js app..."
 cd "$WEB_DIR"
+
+echo "Installing dependencies..."
+npm install
+
+echo "Running tests..."
+npm test
+
+echo "Building Next.js app..."
 npm run build
 
 echo "Copying build to static/..."

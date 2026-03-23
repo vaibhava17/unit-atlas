@@ -1,16 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { convertUnits, ConvertResponse } from "@/lib/api";
-
-const STATES = [
-  "", "UP", "Bihar", "Jharkhand", "Punjab", "Haryana", "HimachalPradesh",
-  "Uttarakhand", "Rajasthan", "Maharashtra", "Gujarat", "TamilNadu",
-  "Kerala", "Karnataka", "AndhraPradesh", "Telangana", "WestBengal",
-  "Tripura", "Assam", "MadhyaPradesh", "Chhattisgarh",
-];
+import { STATES } from "@/lib/constants";
 
 export default function ConvertPage() {
+  const { t } = useTranslation();
   const [value, setValue] = useState("1");
   const [fromUnit, setFromUnit] = useState("bigha");
   const [toUnit, setToUnit] = useState("acre");
@@ -44,17 +40,17 @@ export default function ConvertPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-6 py-8">
-      <h1 className="text-2xl font-bold mb-1">Convert</h1>
+    <div className="max-w-lg mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <h1 className="text-2xl font-bold mb-1">{t("convert.title")}</h1>
       <p className="text-sm text-[var(--muted)] mb-6">
-        Convert between land measurement units
+        {t("convert.subtitle")}
       </p>
 
       <form onSubmit={handleConvert} className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-xs text-[var(--muted)] mb-1">
-              Value
+              {t("convert.value")}
             </label>
             <input
               type="number"
@@ -68,45 +64,46 @@ export default function ConvertPage() {
           </div>
           <div>
             <label className="block text-xs text-[var(--muted)] mb-1">
-              State
+              {t("convert.state")}
             </label>
             <select
               value={state}
               onChange={(e) => setState(e.target.value)}
               className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             >
+              <option value="">{t("convert.any")}</option>
               {STATES.map((s) => (
                 <option key={s} value={s}>
-                  {s || "Any"}
+                  {s}
                 </option>
               ))}
             </select>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-xs text-[var(--muted)] mb-1">
-              From
+              {t("convert.from")}
             </label>
             <input
               type="text"
               value={fromUnit}
               onChange={(e) => setFromUnit(e.target.value)}
-              placeholder="e.g. bigha"
+              placeholder={t("convert.fromPlaceholder")}
               className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               required
             />
           </div>
           <div>
             <label className="block text-xs text-[var(--muted)] mb-1">
-              To
+              {t("convert.to")}
             </label>
             <input
               type="text"
               value={toUnit}
               onChange={(e) => setToUnit(e.target.value)}
-              placeholder="e.g. acre"
+              placeholder={t("convert.toPlaceholder")}
               className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               required
             />
@@ -116,13 +113,13 @@ export default function ConvertPage() {
         {(state === "UP" || state === "MadhyaPradesh") && (
           <div>
             <label className="block text-xs text-[var(--muted)] mb-1">
-              Region (optional)
+              {t("convert.region")}
             </label>
             <input
               type="text"
               value={region}
               onChange={(e) => setRegion(e.target.value)}
-              placeholder="e.g. west, east"
+              placeholder={t("convert.regionPlaceholder")}
               className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             />
           </div>
@@ -133,7 +130,7 @@ export default function ConvertPage() {
           disabled={loading}
           className="w-full bg-[var(--accent)] text-white rounded-md px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
         >
-          {loading ? "Converting..." : "Convert"}
+          {loading ? t("convert.loading") : t("convert.button")}
         </button>
       </form>
 
@@ -159,12 +156,12 @@ export default function ConvertPage() {
             {result.value} {result.from_unit} = {result.result.toLocaleString(undefined, { maximumFractionDigits: 6 })}{" "}
             {result.to_unit}
           </p>
-          <div className="flex justify-center gap-6 mt-3 text-xs text-[var(--muted)]">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-1 sm:gap-6 mt-3 text-xs text-[var(--muted)]">
             <span>
-              1 {result.from_unit} = {result.from_factor.toLocaleString()} sqft
+              1 {result.from_unit} = {result.from_factor.toLocaleString()} {t("convert.sqft")}
             </span>
             <span>
-              1 {result.to_unit} = {result.to_factor.toLocaleString()} sqft
+              1 {result.to_unit} = {result.to_factor.toLocaleString()} {t("convert.sqft")}
             </span>
           </div>
         </div>

@@ -1,15 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api/v1";
-
-const STATES = [
-  "", "UP", "Bihar", "Jharkhand", "Punjab", "Haryana", "HimachalPradesh",
-  "Uttarakhand", "Rajasthan", "Maharashtra", "Gujarat", "TamilNadu",
-  "Kerala", "Karnataka", "AndhraPradesh", "Telangana", "WestBengal",
-  "Tripura", "Assam", "MadhyaPradesh", "Chhattisgarh",
-];
+import { API_BASE, STATES } from "@/lib/constants";
 
 const ENDPOINTS = [
   { id: "get-units", label: "List Units", method: "GET" },
@@ -25,8 +17,8 @@ export default function DocsPage() {
   const [active, setActive] = useState<EndpointId>("get-units");
 
   return (
-    <div className="flex min-h-[calc(100vh-7rem)]">
-      {/* Sidebar */}
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-7rem)]">
+      {/* Sidebar — desktop */}
       <aside className="w-56 shrink-0 border-r border-[var(--border)] py-6 px-4 hidden md:block">
         <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide mb-3 px-2">
           Endpoints
@@ -59,23 +51,23 @@ export default function DocsPage() {
         </nav>
       </aside>
 
-      {/* Mobile dropdown */}
-      <div className="md:hidden w-full px-4 pt-4">
-        <select
-          value={active}
-          onChange={(e) => setActive(e.target.value as EndpointId)}
-          className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] mb-4"
-        >
-          {ENDPOINTS.map((ep) => (
-            <option key={ep.id} value={ep.id}>
-              {ep.method ? `${ep.method} ` : ""}{ep.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Content area */}
+      <div className="flex-1 max-w-3xl px-4 sm:px-6 py-6 md:px-10">
+        {/* Mobile dropdown */}
+        <div className="md:hidden mb-4">
+          <select
+            value={active}
+            onChange={(e) => setActive(e.target.value as EndpointId)}
+            className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)]"
+          >
+            {ENDPOINTS.map((ep) => (
+              <option key={ep.id} value={ep.id}>
+                {ep.method ? `${ep.method} ` : ""}{ep.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      {/* Content */}
-      <div className="flex-1 max-w-3xl px-6 py-6 md:px-10">
         {active === "get-units" && <GetUnitsDoc />}
         {active === "get-unit" && <GetUnitDoc />}
         {active === "convert" && <ConvertDoc />}
@@ -159,7 +151,7 @@ function GetUnitsDoc() {
           Try it
         </div>
         <div className="p-4 space-y-4">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Input label="country" value={country} onChange={setCountry} placeholder="IN" />
             <StateSelect value={state} onChange={setState} />
             <Input label="region" value={region} onChange={setRegion} placeholder="west" />
@@ -245,11 +237,11 @@ function GetUnitDoc() {
           Try it
         </div>
         <div className="p-4 space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input label="name *" value={name} onChange={setName} placeholder="bigha" />
             <Input label="country" value={country} onChange={setCountry} placeholder="IN" />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <StateSelect value={state} onChange={setState} />
             <Input label="region" value={region} onChange={setRegion} placeholder="west" />
           </div>
@@ -345,12 +337,12 @@ function ConvertDoc() {
           Try it
         </div>
         <div className="p-4 space-y-4">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Input label="value *" value={value} onChange={setValue} placeholder="1" />
             <Input label="from_unit *" value={fromUnit} onChange={setFromUnit} placeholder="bigha" />
             <Input label="to_unit *" value={toUnit} onChange={setToUnit} placeholder="acre" />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Input label="country" value={country} onChange={setCountry} placeholder="IN" />
             <StateSelect value={state} onChange={setState} />
             <Input label="region" value={region} onChange={setRegion} placeholder="west" />
@@ -385,10 +377,10 @@ function FallbackDoc() {
       </p>
       <div className="border border-[var(--border)] rounded-lg p-5 bg-[var(--card)]">
         <p className="text-sm font-semibold mb-2">Example: bigha in UP</p>
-        <div className="text-sm text-[var(--muted)] space-y-1 font-mono">
-          <p>?state=UP          → returns both west (27000) and east (13600)</p>
-          <p>?state=UP&region=west → returns only west (27000)</p>
-          <p>?state=UP&region=east → returns only east (13600)</p>
+        <div className="text-xs sm:text-sm text-[var(--muted)] space-y-1 font-mono overflow-x-auto">
+          <p className="whitespace-nowrap">?state=UP          → both west (27000) & east (13600)</p>
+          <p className="whitespace-nowrap">?state=UP&region=west → only west (27000)</p>
+          <p className="whitespace-nowrap">?state=UP&region=east → only east (13600)</p>
         </div>
       </div>
     </>
@@ -415,8 +407,8 @@ function ErrorsDoc() {
   return (
     <>
       <h2 className="text-xl font-bold mb-4">Error Codes</h2>
-      <div className="border border-[var(--border)] rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="border border-[var(--border)] rounded-lg overflow-x-auto">
+        <table className="w-full text-sm min-w-[320px]">
           <thead>
             <tr className="bg-[var(--card)] border-b border-[var(--border)]">
               <th className="text-left px-4 py-2 font-medium text-[var(--muted)]">Code</th>
@@ -467,9 +459,9 @@ function ErrorRow({ code, desc }: { code: number; desc: string }) {
 function DocHeader({ method, path }: { method: string; path: string }) {
   const color = method === "GET" ? "bg-green-600" : "bg-blue-600";
   return (
-    <div className="flex items-center gap-3 mb-4">
-      <span className={`${color} text-white text-xs font-bold px-2 py-1 rounded`}>{method}</span>
-      <code className="font-mono text-lg font-semibold">{path}</code>
+    <div className="flex items-center gap-3 mb-4 flex-wrap">
+      <span className={`${color} text-white text-xs font-bold px-2 py-1 rounded shrink-0`}>{method}</span>
+      <code className="font-mono text-base sm:text-lg font-semibold break-all">{path}</code>
     </div>
   );
 }
@@ -484,8 +476,8 @@ function ParamsTable({
       <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide mb-2">
         Parameters
       </p>
-      <div className="border border-[var(--border)] rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="border border-[var(--border)] rounded-lg overflow-x-auto">
+        <table className="w-full text-sm min-w-[400px]">
           <thead>
             <tr className="bg-[var(--card)] border-b border-[var(--border)]">
               <th className="text-left px-3 py-2 font-medium text-[var(--muted)]">Name</th>
@@ -611,8 +603,9 @@ function StateSelect({ value, onChange }: { value: string; onChange: (v: string)
         onChange={(e) => onChange(e.target.value)}
         className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
       >
+        <option value="">— Any —</option>
         {STATES.map((s) => (
-          <option key={s} value={s}>{s || "— Any —"}</option>
+          <option key={s} value={s}>{s}</option>
         ))}
       </select>
     </div>

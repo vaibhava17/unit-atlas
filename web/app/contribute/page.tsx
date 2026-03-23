@@ -1,16 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { submitContribution } from "@/lib/api";
-
-const STATES = [
-  "", "UP", "Bihar", "Jharkhand", "Punjab", "Haryana", "HimachalPradesh",
-  "Uttarakhand", "Rajasthan", "Maharashtra", "Gujarat", "TamilNadu",
-  "Kerala", "Karnataka", "AndhraPradesh", "Telangana", "WestBengal",
-  "Tripura", "Assam", "MadhyaPradesh", "Chhattisgarh",
-];
+import { STATES } from "@/lib/constants";
 
 export default function ContributePage() {
+  const { t } = useTranslation();
   const [unitName, setUnitName] = useState("");
   const [state, setState] = useState("");
   const [region, setRegion] = useState("");
@@ -42,7 +38,10 @@ export default function ContributePage() {
         notes: notes || undefined,
       });
       setSuccess(
-        `Submitted "${res.unit_name}" (${res.conversion_factor} sqft) — pending review`
+        t("contribute.success", {
+          unit: res.unit_name,
+          factor: res.conversion_factor,
+        })
       );
       setUnitName("");
       setFactor("");
@@ -57,54 +56,54 @@ export default function ContributePage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-6 py-8">
-      <h1 className="text-2xl font-bold mb-1">Contribute</h1>
+    <div className="max-w-lg mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <h1 className="text-2xl font-bold mb-1">{t("contribute.title")}</h1>
       <p className="text-sm text-[var(--muted)] mb-6">
-        Submit a land unit from your region. It will be reviewed before
-        publishing.
+        {t("contribute.subtitle")}
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-xs text-[var(--muted)] mb-1">
-            Unit Name *
+            {t("contribute.unitName")}
           </label>
           <input
             type="text"
             value={unitName}
             onChange={(e) => setUnitName(e.target.value)}
-            placeholder="e.g. bigha"
+            placeholder={t("contribute.unitNamePlaceholder")}
             className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             required
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-xs text-[var(--muted)] mb-1">
-              State
+              {t("contribute.state")}
             </label>
             <select
               value={state}
               onChange={(e) => setState(e.target.value)}
               className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             >
+              <option value="">{t("contribute.stateSelect")}</option>
               {STATES.map((s) => (
                 <option key={s} value={s}>
-                  {s || "— Select —"}
+                  {s}
                 </option>
               ))}
             </select>
           </div>
           <div>
             <label className="block text-xs text-[var(--muted)] mb-1">
-              Region (optional)
+              {t("contribute.region")}
             </label>
             <input
               type="text"
               value={region}
               onChange={(e) => setRegion(e.target.value)}
-              placeholder="e.g. west"
+              placeholder={t("contribute.regionPlaceholder")}
               className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             />
           </div>
@@ -112,7 +111,7 @@ export default function ContributePage() {
 
         <div>
           <label className="block text-xs text-[var(--muted)] mb-1">
-            Value in sqft *
+            {t("contribute.sqftValue")}
           </label>
           <input
             type="number"
@@ -120,7 +119,7 @@ export default function ContributePage() {
             min="0"
             value={factor}
             onChange={(e) => setFactor(e.target.value)}
-            placeholder="e.g. 27000"
+            placeholder={t("contribute.sqftPlaceholder")}
             className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             required
           />
@@ -128,38 +127,38 @@ export default function ContributePage() {
 
         <div>
           <label className="block text-xs text-[var(--muted)] mb-1">
-            Aliases (comma-separated)
+            {t("contribute.aliases")}
           </label>
           <input
             type="text"
             value={aliases}
             onChange={(e) => setAliases(e.target.value)}
-            placeholder="e.g. biga, beegha"
+            placeholder={t("contribute.aliasesPlaceholder")}
             className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
           />
         </div>
 
         <div>
           <label className="block text-xs text-[var(--muted)] mb-1">
-            Source
+            {t("contribute.source")}
           </label>
           <input
             type="text"
             value={source}
             onChange={(e) => setSource(e.target.value)}
-            placeholder="e.g. local farmer, govt registry"
+            placeholder={t("contribute.sourcePlaceholder")}
             className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
           />
         </div>
 
         <div>
           <label className="block text-xs text-[var(--muted)] mb-1">
-            Notes
+            {t("contribute.notes")}
           </label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Any additional context..."
+            placeholder={t("contribute.notesPlaceholder")}
             rows={3}
             className="w-full border border-[var(--border)] rounded-md px-3 py-2 text-sm bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] resize-none"
           />
@@ -170,7 +169,7 @@ export default function ContributePage() {
           disabled={loading}
           className="w-full bg-[var(--accent)] text-white rounded-md px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
         >
-          {loading ? "Submitting..." : "Submit Contribution"}
+          {loading ? t("contribute.loading") : t("contribute.button")}
         </button>
       </form>
 
