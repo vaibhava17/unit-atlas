@@ -1,0 +1,450 @@
+version: v1
+base_unit: sqft
+category: area
+
+countries:
+  IN:
+    name: India
+
+    states:
+
+      UP:
+        name: Uttar Pradesh
+
+        regions:
+          west:
+            units:
+              bigha:
+                value: 27000
+                aliases: ["biga", "beegha", "pucca bigha"]
+                confidence: high
+
+          east:
+            units:
+              bigha:
+                value: 13600
+                aliases: ["kaccha bigha", "kachha bigha"]
+                confidence: medium
+
+              dismil:
+                value: 435.6
+                aliases: ["decimal"]
+                confidence: high
+
+        units:
+          biswa:
+            value: 1350
+            relation:
+              parent: bigha
+              ratio: 1/20
+
+          biswansi:
+            value: 67.5
+            relation:
+              parent: biswa
+              ratio: 1/20
+
+          katha:
+            value: 1361
+            confidence: medium
+
+      Bihar:
+        name: Bihar
+
+        units:
+          bigha:
+            value: 27220
+            confidence: medium
+
+          katha:
+            value: 1361
+            relation:
+              parent: bigha
+              ratio: 1/20
+
+          dhur:
+            value: 68
+            relation:
+              parent: katha
+              ratio: 1/20
+
+          dhurki:
+            value: 3.4
+            relation:
+              parent: dhur
+              ratio: 1/20
+
+          dismil:
+            value: 435.6
+            aliases: ["decimal"]
+
+      Jharkhand:
+        name: Jharkhand
+
+        units:
+          bigha:
+            value: 27220
+            confidence: medium
+
+          katha:
+            value: 1361
+            relation:
+              parent: bigha
+              ratio: 1/20
+
+          dhur:
+            value: 68
+            relation:
+              parent: katha
+              ratio: 1/20
+
+          dhurki:
+            value: 3.4
+            relation:
+              parent: dhur
+              ratio: 1/20
+
+          dismil:
+            value: 435.6
+            aliases: ["decimal"]
+
+      Punjab:
+        name: Punjab
+
+        units:
+          sarsahi:
+            value: 30.25
+            confidence: medium
+
+          marla:
+            value: 272.25
+            relation:
+              parent: kanal
+              ratio: 1/20
+
+          kanal:
+            value: 5445
+
+          bigha:
+            value: 21780
+            confidence: low
+            aliases: ["biga"]
+
+          killa:
+            value: 43560
+            aliases: ["ghumaon"]
+            confidence: high
+
+      Haryana:
+        name: Haryana
+
+        units:
+          sarsahi:
+            value: 30.25
+            confidence: medium
+
+          marla:
+            value: 272.25
+            relation:
+              parent: kanal
+              ratio: 1/20
+
+          kanal:
+            value: 5445
+
+          bigha:
+            value: 21780
+            confidence: low
+
+          killa:
+            value: 43560
+            aliases: ["ghumaon"]
+            confidence: high
+
+      HimachalPradesh:
+        name: Himachal Pradesh
+
+        units:
+          kanal:
+            value: 5445
+
+          marla:
+            value: 272.25
+            relation:
+              parent: kanal
+              ratio: 1/20
+
+          naali:
+            value: 2160
+            aliases: ["nali"]
+            confidence: low
+
+          mutthi:
+            value: 135
+            relation:
+              parent: naali
+              ratio: 1/16
+            confidence: low
+
+          bigha:
+            value: 8712
+            confidence: medium
+
+          biswa:
+            value: 435
+            relation:
+              parent: bigha
+              ratio: 1/20
+            confidence: low
+
+      Uttarakhand:
+        name: Uttarakhand
+
+        units:
+          bigha:
+            value: 6804
+            confidence: medium
+
+          biswa:
+            value: 340
+            relation:
+              parent: bigha
+              ratio: 1/20
+
+          naali:
+            value: 2160
+            aliases: ["nali"]
+            confidence: low
+
+          mutthi:
+            value: 135
+            relation:
+              parent: naali
+              ratio: 1/16
+            confidence: low
+
+      Rajasthan:
+        name: Rajasthan
+
+        units:
+          bigha:
+            value: 17424
+            confidence: medium
+
+          biswa:
+            value: 2420
+            relation:
+              parent: bigha
+              ratio: 1/20
+            confidence: medium
+
+          biswansi:
+            value: 121
+            relation:
+              parent: biswa
+              ratio: 1/20
+
+      Maharashtra:
+        name: Maharashtra
+
+        units:
+          guntha:
+            value: 1089
+            aliases: ["gunte"]
+
+          are:
+            value: 1076.4
+            aliases: ["aar"]
+
+      Gujarat:
+        name: Gujarat
+
+        units:
+          guntha:
+            value: 1089
+            aliases: ["vingha"]
+
+          vigha:
+            value: 17424
+            aliases: ["bigha"]
+
+      TamilNadu:
+        name: Tamil Nadu
+
+        units:
+          kuzhi:
+            value: 144
+            confidence: low
+
+          cent:
+            value: 435.6
+
+          ground:
+            value: 2400
+
+          ma:
+            value: 7200
+            confidence: medium
+
+          kani:
+            value: 57600
+            confidence: medium
+
+          veli:
+            value: 157000
+            confidence: medium
+
+      Kerala:
+        name: Kerala
+
+        units:
+          kuzhi:
+            value: 144
+            confidence: low
+
+          cent:
+            value: 435.6
+
+          are:
+            value: 1076.4
+
+      Karnataka:
+        name: Karnataka
+
+        units:
+          guntha:
+            value: 1089
+            aliases: ["gunte"]
+
+          cent:
+            value: 435.6
+
+      AndhraPradesh:
+        name: Andhra Pradesh
+
+        units:
+          ankanam:
+            value: 72
+
+          cent:
+            value: 435.6
+
+          guntha:
+            value: 1089
+            aliases: ["kunta"]
+
+      Telangana:
+        name: Telangana
+
+        units:
+          ankanam:
+            value: 72
+
+          cent:
+            value: 435.6
+
+          guntha:
+            value: 1089
+            aliases: ["kunta", "kuncham"]
+
+      WestBengal:
+        name: West Bengal
+
+        units:
+          chatak:
+            value: 45
+            relation:
+              parent: katha
+              ratio: 1/16
+
+          katha:
+            value: 720
+
+          bigha:
+            value: 14400
+
+          dismil:
+            value: 435.6
+            aliases: ["decimal"]
+
+      Tripura:
+        name: Tripura
+
+        units:
+          chatak:
+            value: 45
+            relation:
+              parent: katha
+              ratio: 1/16
+
+          katha:
+            value: 720
+
+          bigha:
+            value: 14400
+
+      Assam:
+        name: Assam
+
+        units:
+          lessa:
+            value: 144
+            aliases: ["lecha"]
+
+          katha:
+            value: 2880
+            relation:
+              parent: bigha
+              ratio: 1/5
+
+          bigha:
+            value: 14400
+
+          pura:
+            value: 57600
+            confidence: medium
+
+      MadhyaPradesh:
+        name: Madhya Pradesh
+
+        regions:
+          default:
+            units:
+              bigha:
+                variants:
+                  - value: 12000
+                    confidence: low
+                  - value: 27000
+                    confidence: low
+
+          katha:
+            variants:
+              - value: 1000
+              - value: 1500
+
+      Chhattisgarh:
+        name: Chhattisgarh
+
+        units:
+          bigha:
+            variants:
+              - value: 12000
+              - value: 27000
+
+    global_units:
+      acre:
+        value: 43560
+
+      hectare:
+        value: 107639
+
+      sqft:
+        value: 1
+
+      sqyard:
+        value: 9
+        aliases: ["gaj"]
+
+      sqmeter:
+        value: 10.764
+        aliases: ["sqm"]
