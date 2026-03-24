@@ -1,13 +1,17 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.models.schemas import ConvertRequest, ConvertResponse
 from app.services.convert_service import convert, ConversionError
 
 router = APIRouter()
+limiter = Limiter(key_func=get_remote_address)
 
 
 @router.post("/convert", response_model=ConvertResponse)
-async def convert_units(req: ConvertRequest):
+@limiter.limit("30/minute")
+async def convert_units(request: Request, req: ConvertRequest):
     if req.region and not req.state:
         raise HTTPException(status_code=400, detail="region requires state")
     try:

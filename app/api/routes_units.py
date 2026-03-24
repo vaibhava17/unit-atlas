@@ -1,11 +1,14 @@
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.models.schemas import UnitResponse
 from app.services.unit_service import find_units, find_unit_by_name
 
 router = APIRouter()
+limiter = Limiter(key_func=get_remote_address)
 
 
 def _to_response(unit) -> UnitResponse:
@@ -25,7 +28,9 @@ def _to_response(unit) -> UnitResponse:
 
 
 @router.get("/units", response_model=list[UnitResponse])
+@limiter.limit("60/minute")
 async def get_units(
+    request: Request,
     country: Optional[str] = Query(None),
     state: Optional[str] = Query(None),
     region: Optional[str] = Query(None),
@@ -37,7 +42,9 @@ async def get_units(
 
 
 @router.get("/unit/{name}", response_model=UnitResponse)
+@limiter.limit("60/minute")
 async def get_unit(
+    request: Request,
     name: str,
     country: Optional[str] = Query(None),
     state: Optional[str] = Query(None),

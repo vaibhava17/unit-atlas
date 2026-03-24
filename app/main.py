@@ -2,8 +2,12 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 from app.core.database import init_db
 from app.api.routes_units import router as units_router
@@ -12,6 +16,8 @@ from app.api.routes_contribute import router as contribute_router
 from app.api.routes_admin import router as admin_router
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
+
+limiter = Limiter(key_func=get_remote_address)
 
 
 @asynccontextmanager
@@ -25,6 +31,17 @@ app = FastAPI(
     description="Geo-aware unit measurement API",
     version="0.1.0",
     lifespan=lifespan,
+)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(units_router, prefix="/api/v1")

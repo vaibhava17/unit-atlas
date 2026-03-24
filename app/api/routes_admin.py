@@ -1,6 +1,8 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.core.auth import require_admin
 
@@ -13,6 +15,7 @@ from app.services.contribution_service import (
 )
 
 router = APIRouter(dependencies=[Depends(require_admin)])
+limiter = Limiter(key_func=get_remote_address)
 
 
 def _to_response(doc) -> ContributionResponse:
@@ -34,13 +37,15 @@ def _to_response(doc) -> ContributionResponse:
 
 
 @router.get("/contributions", response_model=list[ContributionResponse])
-async def get_contributions(status: Optional[str] = Query(None)):
+@limiter.limit("30/minute")
+async def get_contributions(request: Request, status: Optional[str] = Query(None)):
     docs = await list_contributions(status)
     return [_to_response(d) for d in docs]
 
 
 @router.post("/approve/{contribution_id}", response_model=ContributionResponse)
-async def approve(contribution_id: str):
+@limiter.limit("20/minute")
+async def approve(request: Request, contribution_id: str):
     try:
         doc = await approve_contribution(contribution_id)
         return _to_response(doc)
@@ -49,7 +54,8 @@ async def approve(contribution_id: str):
 
 
 @router.post("/reject/{contribution_id}", response_model=ContributionResponse)
-async def reject(contribution_id: str):
+@limiter.limit("20/minute")
+async def reject(request: Request, contribution_id: str):
     try:
         doc = await reject_contribution(contribution_id)
         return _to_response(doc)
